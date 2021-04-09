@@ -1,0 +1,139 @@
+USE master 
+
+alter database ILS set offline with rollback immediate;
+
+RESTORE DATABASE ILS FROM DISK = 'C:\distr\bu\STX.bak' WITH replace, recovery; 
+
+alter database ILS set online;
+
+USE ILS 
+
+DECLARE @server NVARCHAR(100) 
+
+SET @server = N'wm-v195' 
+
+-- Billing Mgmt Web 
+UPDATE main_ui_screen 
+SET    path = N'http://' + @server + '/BMWEB' 
+WHERE  form_id = 2598; 
+
+-- Billing Mgmt File Path  
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\BillingMgt' 
+WHERE  record_type = N'PkCost' 
+       AND sys_key = N'10'; 
+
+-- Billing Mgmt Output Path 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\BillingMgt\Interfaces' 
+WHERE  record_type = N'PkCost' 
+       AND sys_key = N'20'; 
+
+-- Int Download Input Dir 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Interface\Input\' 
+WHERE  record_type = N'Interface' 
+       AND sys_key = N'30'; 
+
+-- Int Download Output Dir 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Interface\Output\' 
+WHERE  record_type = N'Interface' 
+       AND sys_key = N'40'; 
+
+-- Int Upload Output Dir 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Interface\Upload\' 
+WHERE  record_type = N'Interface' 
+       AND sys_key = N'150'; 
+
+-- Interface Stylesheet directory 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Interface\xsl' 
+WHERE  record_type = N'Interface' 
+       AND sys_key = N'180'; 
+
+-- MR File Path 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server 
+                      + '\ILS\Reporting\MA Starter Reports\SQL Server' 
+WHERE  record_type = N'Technical' 
+       AND sys_key = N'100'; 
+
+-- Print Engine Location 
+UPDATE system_config_detail 
+SET    system_value = @server 
+WHERE  record_type = N'Technical' 
+       AND sys_key = N'120'; 
+
+-- Name or IP Address of the Reporting Server 
+UPDATE system_config_detail 
+SET    system_value = @server 
+WHERE  record_type = N'Technical' 
+       AND sys_key = N'140'; 
+
+-- template file path 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Printing' 
+WHERE  record_type = N'Technical' 
+       AND sys_key = N'170'; 
+
+-- Default RF URL 
+UPDATE main_ui_screen 
+SET    path = N'http://' + @server + '/RF/logon.aspx' 
+WHERE  form_id = 2514; 
+
+-- Personal Alerts 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Printing' 
+WHERE  record_type = N'Technical' 
+       AND sys_key = N'310'; 
+
+-- Workflow Directory 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Workflow' 
+WHERE  record_type = N'Technical' 
+       AND sys_key = N'350'; 
+
+-- Order Directory 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\WebOrder' 
+WHERE  record_type = N'Web Inq' 
+       AND sys_key = N'60'; 
+
+-- Personal Views default report directory 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\Reporting' 
+WHERE  record_type = N'Web Inq' 
+       AND sys_key = N'80'; 
+
+-- Reviewed Order Directory 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\WebOrder\Reviewed' 
+WHERE  record_type = N'Web Inq' 
+       AND sys_key = N'90'; 
+
+-- Web Stylesheet directory 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server + '\ILS\TPM\xsl' 
+WHERE  record_type = N'Web Inq' 
+       AND sys_key = N'120'; 
+
+-- Default TPM URL  
+UPDATE main_ui_screen 
+SET    path = N'http://' + @server + '/TPM/UserSignon.aspx' 
+WHERE  form_id = 2513; 
+
+-- Performance Management Default Documents 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server 
+                      + '\ILS\Performance Management' 
+WHERE  record_type = N'PERFMAN' 
+       AND sys_key = N'10'; 
+
+-- Performance Management Analytics 
+UPDATE system_config_detail 
+SET    system_value = N'\\' + @server 
+                      + '\ILS\Performance Management\Analytics' 
+WHERE  record_type = 'PERFMAN' 
+       AND sys_key = '30';
